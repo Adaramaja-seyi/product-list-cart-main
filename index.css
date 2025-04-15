@@ -1,0 +1,119 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+.btn{
+  position: absolute;
+  margin-top: -40px;
+  border-radius: 20px !important;
+  margin-left: 50px;
+  background-color: aliceblue !important;
+  color: black !important;
+  font-weight: 500 !important;
+  border: 1px solid hsl(14, 86%, 42%) !important;
+  display: block;
+
+}
+
+.hoverbtn{
+  position: absolute;
+  margin-top: -40px !important;
+  width: 49%;
+  border-radius: 20px !important;
+  margin-left: 50px !important;
+  background-color:hsl(14, 86%, 42%) !important;
+  color: black !important;
+  font-weight: 500 !important;
+  border: 1px solid hsl(14, 86%, 42%) !important;
+  padding: 6px;
+display: none;
+}
+.img1{
+  margin-left:10px;
+  /* border: 1px solid rgb(240, 234, 225) !important; */
+}
+.img2{
+  margin-left: 40px !important;
+  /* border: 1px solid rgb(218, 214, 208) !important; */
+}
+.btn:hover button {
+display: block ;
+background-color: black;
+}
+.main{
+  display: flex;
+  flex-direction: row;
+
+}
+.cart{
+  position: fixed;
+  right: 30px;
+  width: 25%;
+  /* border: 1px solid red; */
+  height: 300px;
+  margin-left: 12px;
+
+  /* text-align: center; */
+}
+
+/* .rounded{
+  width: 70% !important;
+  border: 1px solid red;
+  display: flex !important ;
+  flex-direction: row !important;
+} */
+.row{
+  width:70%;
+  /* border: 1px solid red; */
+  padding: 10px;
+  overflow: hidden;
+
+}
+.container-fluid{
+  /* border: 1px solid red; */
+  width: 100%;
+  
+}
+.yourcart{
+ /* color:  hsl(14, 86%, 42%) ; */
+ font-weight: 900;
+ margin-left: 40px;
+}
+.emptycake{
+  margin-left: 37%;
+  width: 40%;
+}
+.cake{
+  text-align: center;
+    margin-top: 70px;
+    font-weight: 400;
+    color: hsl(14, 65%, 9%);
+}
+
+/* .modal {
+  display: block; 
+  position: fixed;
+  border: 2px solid teal;
+  top: 0;
+  left: 71%;
+  width: 30%;
+  height: 100px;
+  background-color: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+} */
+
+.count{
+  text-align: center !important;
+  color: aliceblue;
+  margin-left: 40px;
+}
