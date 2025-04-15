@@ -99,6 +99,8 @@ function fetchAdvice() {
       productCard.innerHTML = ""; // Clear existing content if any
 
       data.forEach((product) => {
+        
+        let count = 1
         const cardHTML = `
           <div class="col-md-4 p-5 bg-white rounded">
             <div class="card" style="width: 18rem;">
@@ -147,6 +149,11 @@ function fetchAdvice() {
 
         decrementBtn.addEventListener("click", () => {
           let currentCount = parseInt(countDisplay.textContent);
+          if (currentCount === 1){
+          addBtn.style.display = "block";
+           hoverBtn.style.display = "none"
+
+          }
           if (currentCount > 1) {
             currentCount--;
             countDisplay.textContent = currentCount;
