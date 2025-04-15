@@ -90,30 +90,47 @@ background-color: black;
     font-weight: 400;
     color: hsl(14, 65%, 9%);
 }
-
-/* .modal {
-  display: block; 
-  position: fixed;
-  border: 2px solid teal;
-  top: 0;
-  left: 71%;
-  width: 30%;
-  height: 100px;
-  background-color: rgba(0,0,0,0.6);
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+.btn-success{
+  position: unset;
+  margin-top: 10px;
+  width: 90%;
+  color: white !important;
+  background-color: brown !important;
 }
-
-.modal-content {
-  background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
-} */
 
 .count{
   text-align: center !important;
   color: aliceblue;
   margin-left: 40px;
 }
+#confirmation-modal{
+  display:none; 
+  position:fixed;
+   top:0;
+    left:0
+    ; width:100%;
+     height:100%;
+      background-color:rgba(0,0,0,0.6);
+       justify-content:center; 
+       align-items:center;
+}
+
+.modal1{
+  background:white;
+   padding:2rem;
+    border-radius:10px;
+     text-align:center;
+}
+
+
+.cart-footer{
+  display: none;
+}
+
+
+
+
+
+
+
+
