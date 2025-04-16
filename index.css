@@ -31,10 +31,12 @@ display: none;
 }
 .img1{
   margin-left:10px;
+  cursor: pointer;
   /* border: 1px solid rgb(240, 234, 225) !important; */
 }
 .img2{
   margin-left: 40px !important;
+  cursor: pointer;
   /* border: 1px solid rgb(218, 214, 208) !important; */
 }
 .btn:hover button {
@@ -110,6 +112,7 @@ background-color: black;
     left:0
     ; width:100%;
      height:100%;
+     
       background-color:rgba(0,0,0,0.6);
        justify-content:center; 
        align-items:center;
@@ -120,6 +123,7 @@ background-color: black;
    padding:2rem;
     border-radius:10px;
      text-align:center;
+    padding-bottom: 20px;
 }
 
 
@@ -127,9 +131,19 @@ background-color: black;
   display: none;
 }
 
+.remove-btn{
+  float: right;
+  margin-top: -40px;
+}
 
-
-
+#confirm-no{
+  margin-left: -20px;
+  margin-top: 1px;
+}
+#confirm-yes{
+  margin-left: 60px;
+  margin-top: 0px;
+}
 
 
 
