@@ -1,229 +1,238 @@
-// === Entry Point ===
+// Start the app when the page loads
 document.addEventListener("DOMContentLoaded", () => {
-  initApp();
+  startMyApp();
 });
 
-function initApp() {
-  fetchProducts();
-  setupOrderConfirmation();
+// Main function to kick things off
+function startMyApp() {
+  loadDesserts();
+  setupCheckout();
 }
 
-// === Fetch and Render Products ===
-function fetchProducts() {
+// Load desserts from data.json
+function loadDesserts() {
   fetch("/public/data.json")
-    .then((response) => response.json())
-    .then((data) => renderProducts(data))
-    .catch((error) => console.error("Error fetching data.json:", error));
+      .then((res) => res.json())
+      .then((desserts) => showDesserts(desserts))
+      .catch((err) => console.log("Oops, couldn't load desserts:", err));
 }
 
-function renderProducts(products) {
-  const productCard = document.querySelector(".row");
-  productCard.innerHTML = "";
-  products.forEach(
-    (product) => (productCard.innerHTML += createProductCard(product))
-  );
-  setupProductEvents();
+// Display desserts on the page
+function showDesserts(desserts) {
+  const dessertGrid = document.querySelector(".my-products");
+  dessertGrid.innerHTML = "";
+  desserts.forEach((dessert) => {
+      dessertGrid.innerHTML += makeDessertCard(dessert);
+  });
+  addDessertButtons();
 }
 
-function createProductCard(product) {
+// Create HTML for a single dessert card
+function makeDessertCard(dessert) {
   return `
-    <div class="col-md-4 p-5 bg-white rounded">
-      <div class="card" style="width: 18rem;" data-product-name="${
-        product.name
-      }">
-        <img src="${product.image.desktop}" class="card-img-top" alt="${
-    product.name
-  }">
-        <div class="card-body">
-          <a href="#" class="btn btn-primary add-to-cart">
-            <img src="/assets/images/icon-add-to-cart.svg" alt=""> Add to Cart
-          </a>
-          <div class="hoverbtn" style="display: none;">
-            <img src="/assets/images/icon-decrement-quantity.svg" class="img1" alt="">
-            <span class="count">1</span>
-            <img src="/assets/images/icon-increment-quantity.svg" class="img2" alt="">
+      <div class="col">
+          <div class="card h-100 border-0 shadow-sm" data-dessert="${dessert.name}">
+              <img src="${dessert.image.desktop}" class="card-img-top rounded" alt="${dessert.name}">
+              <div class="card-body">
+                  <button class="btn btn-dark border add-dessert w-75 mb-3">
+                      <img src="/assets/images/icon-add-to-cart.svg" alt="Add" class="me-2">
+                      Add to Cart
+                  </button>
+                  <div class="quantity-box d-none w-75 mb-3">
+                      <div class="btn-group w-100">
+                          <button class="btn btn-dark reduce-btn">
+                              <img src="/assets/images/icon-decrement-quantity.svg" alt="Reduce">
+                          </button>
+                          <span class="qty btn btn-light border-0">1</span>
+                          <button class="btn btn-primary add-btn">
+                              <img src="/assets/images/icon-increment-quantity.svg" alt="Add">
+                          </button>
+                      </div>
+                  </div>
+                  <p class="text-muted mb-1">${dessert.category}</p>
+                  <h5 class="fw-bold">${dessert.name}</h5>
+                  <p class="text-danger fw-bold">₦${dessert.price.toFixed(2)}</p>
+              </div>
           </div>
-          <p class="card-title">${product.category}</p>
-          <h5 class="card-text">${product.name}</h5>
-          <p class="text-danger">₦ ${product.price.toFixed(2)}</p>
-        </div>
       </div>
-    </div>
   `;
 }
 
-// === Product Event Handling ===
-function setupProductEvents() {
+// Set up buttons for adding/removing desserts
+function addDessertButtons() {
   const cards = document.querySelectorAll(".card");
-
   cards.forEach((card) => {
-    const addBtn = card.querySelector(".add-to-cart");
-    const hoverBtn = card.querySelector(".hoverbtn");
-    const incrementBtn = card.querySelector(".img2");
-    const decrementBtn = card.querySelector(".img1");
-    const countDisplay = card.querySelector(".count");
-    const productName = card.dataset.productName;
-    const priceText = card.querySelector(".text-danger").textContent;
+      const addBtn = card.querySelector(".add-dessert");
+      const qtyBox = card.querySelector(".quantity-box");
+      const addMore = card.querySelector(".add-btn");
+      const reduce = card.querySelector(".reduce-btn");
+      const qtyText = card.querySelector(".qty");
+      const dessertName = card.dataset.dessert;
+      const price = parseFloat(card.querySelector(".text-danger").textContent.replace("₦", ""));
 
-    let count = 1;
-    const price = getCleanPrice(priceText);
+      let qty = 1;
 
-    addBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      count = 1;
-      toggleCartButtons(addBtn, hoverBtn, true);
-      countDisplay.textContent = count;
-      updateCartItem(productName, count, price);
-      updateTotal();
-    });
+      addBtn.addEventListener("click", () => {
+          qty = 1;
+          qtyText.textContent = qty;
+          showQtyBox(addBtn, qtyBox);
+          updateMyCart(dessertName, qty, price);
+          refreshTotal();
+          updateCartCount();
+      });
 
-    incrementBtn.addEventListener("click", () => {
-      count++;
-      countDisplay.textContent = count;
-      decrementBtn.disabled = count <= 1; 
-       // his is a built-in DOM property. When true, the button is disabled (unclickable and greyed out). When false, it’s enabled
-      updateCartItem(productName, count, price);
-      updateTotal();
-    });
+      addMore.addEventListener("click", () => {
+          qty++;
+          qtyText.textContent = qty;
+          updateMyCart(dessertName, qty, price);
+          refreshTotal();
+          updateCartCount();
+      });
 
-    decrementBtn.addEventListener("click", () => {
-      if (count > 1) {
-        count--;
-        countDisplay.textContent = count;
-        decrementBtn.disabled = count <= 1;
-        updateCartItem(productName, count, price);
-      } else {
-        resetProductUI(addBtn, hoverBtn);
-        handleRemoveCartItem(productName);
-      }
-      updateTotal();
-    });
+      reduce.addEventListener("click", () => {
+          if (qty > 1) {
+              qty--;
+              qtyText.textContent = qty;
+              updateMyCart(dessertName, qty, price);
+          } else {
+              clearDessert(addBtn, qtyBox, qtyText);
+              removeFromCart(dessertName);
+          }
+          refreshTotal();
+          updateCartCount();
+      });
   });
 }
 
-// === Cart Management ===
-function updateCartItem(name, count, price) {
-  const cartlist = document.querySelector(".cartlist");
-  const totalPrice = (price * count).toFixed(2);
-  const existingItem = cartlist.querySelector(`[data-cart-item="${name}"]`);
+// Update the cart with a dessert
+function updateMyCart(name, qty, price) {
+  const cartItems = document.querySelector(".cart-content");
+  const total = (qty * price).toFixed(2);
+  const item = cartItems.querySelector(`[data-item="${name}"]`);
 
-  if (existingItem) {
-    existingItem.querySelector(
-      "p"
-    ).textContent = `${count}x    @₦${price.toFixed(2)}  - ₦${totalPrice}`;
+  if (item) {
+      item.querySelector(".item-info").innerHTML = `
+          <span class="text-primary fw-bold">${qty}x</span>
+          <span class="text-muted ms-2">@ ₦${price.toFixed(2)}</span>
+          <span class="text-dark fw-bold ms-2">₦${total}</span>
+      `;
   } else {
-    const productDiv = document.createElement("div");
-    productDiv.setAttribute("data-cart-item", name);
-    productDiv.innerHTML = `
-      <h3>${name}</h3>
-      <p>${count}x    - @₦${totalPrice}</p>
-      <button class="remove-btn" style="background:none;border:none;color:red;cursor:pointer;">×</button>
-    `;
-    productDiv.querySelector(".remove-btn").addEventListener("click", () => {
-      handleRemoveCartItem(name);
-    });
-    cartlist.appendChild(productDiv);
+      const newItem = document.createElement("div");
+      newItem.classList.add("d-flex", "justify-content-between", "align-items-center", "mb-2");
+      newItem.setAttribute("data-item", name);
+      newItem.innerHTML = `
+          <div>
+              <h6 class="fw-bold mb-1">${name}</h6>
+              <div class="item-info">
+                  <span class="text-primary fw-bold">${qty}x</span>
+                  <span class="text-muted ms-2">@ ₦${price.toFixed(2)}</span>
+                  <span class="text-dark fw-bold ms-2">₦${total}</span>
+              </div>
+          </div>
+          <button class="btn btn-link text-danger p-0 delete-item">
+              <img src="/assets/images/icon-remove-item.svg" alt="Delete">
+          </button>
+      `;
+      newItem.querySelector(".delete-item").addEventListener("click", () => {
+          removeFromCart(name);
+          refreshTotal();
+          updateCartCount();
+      });
+      cartItems.appendChild(newItem);
   }
-  updateCartCountDisplay()
-  document.querySelector(".emptycake").style.display = "none";
-  document.querySelector(".cake").style.display = "none";
-  document.querySelector(".cart-footer").style.display = "block";
+
+  document.querySelector(".empty-cart-img").style.display = "none";
+  document.querySelector(".empty-cart-text").style.display = "none";
+  document.querySelector(".cart-summary").style.display = "block";
 }
 
-function getCartItemCount() {
-  return document.querySelectorAll(".cartlist [data-cart-item]").length;
-}
-
-function updateCartCountDisplay() {
-  const countCart = getCartItemCount();
-  document.querySelector(".cartcount").textContent = `(${countCart})`;
-}
-
-
-function handleRemoveCartItem(name) {
-  // Remove from cart
-  const item = document.querySelector(`[data-cart-item="${name}"]`);
+// Remove a dessert from the cart
+function removeFromCart(name) {
+  const item = document.querySelector(`[data-item="${name}"]`);
   if (item) item.remove();
 
-  // Reset the product UI
-  const card = document.querySelector(`.card[data-product-name="${name}"]`);
+  const card = document.querySelector(`.card[data-dessert="${name}"]`);
   if (card) {
-    const addBtn = card.querySelector(".add-to-cart");
-    const hoverBtn = card.querySelector(".hoverbtn");
-    const countDisplay = card.querySelector(".count");
-    countDisplay.textContent = "1";
-    toggleCartButtons(addBtn, hoverBtn, false);
+      const addBtn = card.querySelector(".add-dessert");
+      const qtyBox = card.querySelector(".quantity-box");
+      const qtyText = card.querySelector(".qty");
+      clearDessert(addBtn, qtyBox, qtyText);
   }
 
-  // Update total and check cart status
-  updateTotal();
-  updateCartCountDisplay()
-  checkEmptyCart();
+  checkIfCartEmpty();
 }
 
-function updateTotal() {
-  const cartItems = document.querySelectorAll(".cartlist [data-cart-item]");
+// Update the total price
+function refreshTotal() {
+  const items = document.querySelectorAll(".cart-content [data-item]");
   let total = 0;
+  items.forEach((item) => {
+      const price = parseFloat(item.querySelector(".item-info .text-dark").textContent.replace("₦", ""));
+      total += price;
+  });
+  document.getElementById("total-price").textContent = total.toFixed(2);
+}
 
-  cartItems.forEach((item) => {
-    const priceLine = item.querySelector("p").textContent;
-    const match = priceLine.match(/₦(\d+(\.\d{2})?)$/);
-    if (match) total += parseFloat(match[1]);
+// Check if the cart is empty
+function checkIfCartEmpty() {
+  const items = document.querySelectorAll(".cart-content [data-item]").length;
+  if (items === 0) {
+      document.querySelector(".empty-cart-img").style.display = "block";
+      document.querySelector(".empty-cart-text").style.display = "block";
+      document.querySelector(".cart-summary").style.display = "none";
+  }
+}
+
+// Update the cart item count
+function updateCartCount() {
+  const itemCount = document.querySelectorAll(".cart-content [data-item]").length;
+  document.querySelector(".cart-items-count").textContent = `(${itemCount})`;
+}
+
+// Show/hide add button and quantity box
+function showQtyBox(addBtn, qtyBox) {
+  addBtn.classList.add("d-none");
+  qtyBox.classList.remove("d-none");
+}
+
+// Reset dessert card UI
+function clearDessert(addBtn, qtyBox, qtyText) {
+  qtyText.textContent = "1";
+  addBtn.classList.remove("d-none");
+  qtyBox.classList.add("d-none");
+}
+
+// Set up checkout modal
+function setupCheckout() {
+  const checkoutBtn = document.getElementById("checkout-btn");
+  const submitBtn = document.getElementById("submit-order");
+  const newOrderBtn = document.getElementById("new-order");
+  const modal = new bootstrap.Modal(document.getElementById("order-modal"));
+
+  checkoutBtn.addEventListener("click", () => {
+      document.getElementById("order-items").innerHTML = document.querySelector(".cart-content").innerHTML;
+      document.getElementById("order-total").textContent = document.getElementById("total-price").textContent;
+      modal.show();
   });
 
-  document.getElementById("order-total").textContent = total.toFixed(2);
+  submitBtn.addEventListener("click", () => {
+      document.getElementById("order-success").style.display = "block";
+      document.getElementById("submit-order").style.display = "none";
+      document.getElementById("cancel-btn").style.display = "none";
+      document.getElementById("new-order").style.display = "inline-block";
+  });
+
+  newOrderBtn.addEventListener("click", () => {
+      document.querySelector(".cart-content").innerHTML = "";
+      document.querySelectorAll(".card").forEach((card) => {
+          const addBtn = card.querySelector(".add-dessert");
+          const qtyBox = card.querySelector(".quantity-box");
+          const qtyText = card.querySelector(".qty");
+          clearDessert(addBtn, qtyBox, qtyText);
+      });
+      refreshTotal();
+      updateCartCount();
+      checkIfCartEmpty();
+      modal.hide();
+  });
 }
-
-function checkEmptyCart() {
-  const cartlist = document.querySelector(".cartlist");
-  const isEmpty = cartlist.children.length === 0;
-  document.querySelector(".emptycake").style.display = isEmpty
-    ? "block"
-    : "none";
-  document.querySelector(".cake").style.display = isEmpty ? "block" : "none";
-  document.querySelector(".cart-footer").style.display = isEmpty
-    ? "none"
-    : "block";
-}
-
-// === Utility Functions ===
-function getCleanPrice(priceStr) {
-  return Number(priceStr.replace(/[^0-9.]/g, ""));
-}
-
-function toggleCartButtons(addBtn, hoverBtn, isCartVisible) {
-  addBtn.style.display = isCartVisible ? "none" : "block";
-  hoverBtn.style.display = isCartVisible ? "inline-flex" : "none";
-}
-
-function resetProductUI(addBtn, hoverBtn) {
-  toggleCartButtons(addBtn, hoverBtn, false);
-}
-
-document.getElementById("confirm-order").addEventListener("click", () => {
-  document.getElementById("confirmation-modal").style.display = "flex";
-  document.getElementById("modal-total").textContent = document.getElementById("order-total").textContent;
- 
-});
-
-document.getElementById("confirm-yes").addEventListener("click", () => {
-  alert("Order confirmed! 🎉");
-  document.getElementById("confirmation-modal").style.display = "none";
-  document.querySelector(".cartlist").innerHTML = "";
-  document.getElementById("order-total").textContent = "0.00";
-  document.querySelector(".emptycake").style.display = "block";
-  document.querySelector(".cake").style.display = "block";
-});
-
-document.getElementById("confirm-no").addEventListener("click", () => {
-  document.getElementById("confirmation-modal").style.display = "none";
-  updateTotal();
-  checkEmptyCart();
-});
-
-
-
-
-
-
-
