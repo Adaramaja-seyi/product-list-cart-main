@@ -11,7 +11,7 @@ function startMyApp() {
 
 // Load desserts from data.json
 function loadDesserts() {
-  fetch("/public/data.json")
+  fetch("./data.json") 
       .then((res) => res.json())
       .then((desserts) => showDesserts(desserts))
       .catch((err) => console.log("Oops, couldn't load desserts:", err));
@@ -35,17 +35,17 @@ function makeDessertCard(dessert) {
               <img src="${dessert.image.desktop}" class="card-img-top rounded" alt="${dessert.name}">
               <div class="card-body">
                   <button class="btn btn-dark border add-dessert w-75 mb-3">
-                      <img src="/assets/images/icon-add-to-cart.svg" alt="Add" class="me-2">
+                      <img src="./assets/images/icon-add-to-cart.svg" alt="Add" class="me-2">
                       Add to Cart
                   </button>
                   <div class="quantity-box d-none w-75 mb-3">
                       <div class="btn-group w-100">
                           <button class="btn btn-dark reduce-btn">
-                              <img src="/assets/images/icon-decrement-quantity.svg" alt="Reduce">
+                              <img src="./assets/images/icon-decrement-quantity.svg" alt="Reduce">
                           </button>
                           <span class="qty btn btn-light border-0">1</span>
                           <button class="btn btn-primary add-btn">
-                              <img src="/assets/images/icon-increment-quantity.svg" alt="Add">
+                              <img src="./assets/images/icon-increment-quantity.svg" alt="Add">
                           </button>
                       </div>
                   </div>
@@ -130,7 +130,7 @@ function updateMyCart(name, qty, price) {
               </div>
           </div>
           <button class="btn btn-link text-danger p-0 delete-item">
-              <img src="/assets/images/icon-remove-item.svg" alt="Delete">
+              <img src="./assets/images/icon-remove-item.svg" alt="Delete">
           </button>
       `;
       newItem.querySelector(".delete-item").addEventListener("click", () => {
